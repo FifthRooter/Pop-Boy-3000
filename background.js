@@ -71,9 +71,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 
         //     }
         // })
-        chrome.tabs.create({
-            "url": 'https://www.duckduckgo.com/?q='+request.payload
-          });
+        // chrome.tabs.create({
+        //     "url": 'https://www.duckduckgo.com/?q='+request.payload
+        //   });
+        chrome.search.query({disposition: "NEW_TAB", text: request.payload})
+
         return true
     }
 })

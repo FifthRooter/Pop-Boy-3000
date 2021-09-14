@@ -44,14 +44,6 @@ document.addEventListener('mouseup', (e) => {
         highlightIsOn = false
     }
     
-
-    // chrome.runtime.sendMessage({
-    //     message: 'get_name'
-    // }, res => {
-    //     if (res.message === 'success') {
-    //         extName.innerHTML = res.payload
-    //     }
-    // })
 });
 
 

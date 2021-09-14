@@ -5,7 +5,6 @@ const extSearchButton = document.createElement('DIV')
 const extCopyButton = document.createElement('DIV')
 
 let highlightIsOn = false
-
 extMainContainer.classList.add('ext-main')
 extName.id = 'ext-name'
 //extInput.id = 'ext-input'
@@ -20,6 +19,11 @@ extMainContainer.appendChild(extName)
 //extMainContainer.appendChild(extInput)
 extMainContainer.appendChild(extCopyButton)
 extMainContainer.appendChild(extSearchButton)
+
+function closePopBoy() {
+    document.querySelector('body').removeChild(extMainContainer)
+    highlightIsOn = false
+}
 
 document.addEventListener('mouseup', (e) => {
     let pos = {
@@ -39,13 +43,12 @@ document.addEventListener('mouseup', (e) => {
         document.querySelector('body').appendChild(extMainContainer)
     } else {
         if (document.getElementById('ext-name') !== null) {
-            document.querySelector('body').removeChild(extMainContainer)
+            closePopBoy()
         }
         highlightIsOn = false
     }
     
 });
-
 
 
 extCopyButton.addEventListener('mousedown', () => {
@@ -72,6 +75,7 @@ extSearchButton.addEventListener('mousedown', () => {
                 console.log('search');
                 console.log(result.message);
             })
+            closePopBoy()
         }
     })
 })

@@ -31,7 +31,7 @@ document.addEventListener('mouseup', (e) => {
 
     let selection = window.getSelection().toString()
     selection = selection.trim()
-    if (selection.length > 0) {
+    if (selection.length > 0 && !highlightIsOn) {
         chrome.storage.local.set({
             name: selection
         })

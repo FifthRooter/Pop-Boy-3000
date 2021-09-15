@@ -1,12 +1,14 @@
 export default function convertUnit(text) {
-    text = text.trim()
-    if (text[text.length-1] !== /^[a-zA-Z]+$/) {
-        return false
-    }
-    for (let i=0; i<text.length; i++) {
+    // text = text.trim()
+    // if (text[text.length-1] !== /^[a-zA-Z]+$/) {
+    //     return false
+    // }
+    // for (let i=0; i<text.length; i++) {
         
-    }
+    // }
+    console.log(text);
 }
+
 
 // 1) check if last element of the string is a non-number (can be a letter or a "." or a "°"): if it is, continue with following steps, otherwise don't return false
 // 2) iterate through the string element by element using regex to check if it's a number

@@ -24,3 +24,10 @@
     cursor: pointer;
     font-size: 14px;
 }
+
+#ext-unit {
+    margin: 4px 7px;
+    width: fit-content;
+    font-size: 14px;
+
+}

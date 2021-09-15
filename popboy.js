@@ -1,5 +1,3 @@
-// import convertUnit from "./helpers/convertUnit"
-
 const extMainContainer = document.createElement('DIV')
 const extName = document.createElement('DIV')
 const extInput = document.createElement('INPUT')
@@ -13,6 +11,7 @@ extMainContainer.classList.add('ext-main')
 extName.id = 'ext-name'
 extSearchButton.id = 'ext-btn'
 extCopyButton.id = 'ext-btn'
+extUnitConv.id = 'ext-unit'
 
 extSearchButton.innerHTML = 'Search'
 extCopyButton.innerHTML = 'Copy'
@@ -21,7 +20,63 @@ extMainContainer.appendChild(extName)
 extMainContainer.appendChild(extCopyButton)
 extMainContainer.appendChild(extSearchButton)
 
-function convertUnit(text) {
+
+
+function convertUnit(data) {
+    let convertedUnit = {}
+    let num
+
+    switch (data.unit) {
+        case 'inch': {
+            num = data.number * 2.54
+            convertedUnit = {
+                number: num.toFixed(2),
+                unit: 'cm'
+            }
+            break
+        }
+        case 'mile': {
+            num = data.number * 1.609344
+            convertedUnit = {
+                number: num.toFixed(2),
+                unit: 'km'
+            }
+            break
+        }
+        case 'miles': {
+            num = data.number * 1.609344
+            convertedUnit = {
+                number: num.toFixed(2),
+                unit: 'km'
+            }
+            break
+        }
+        case 'F': {
+            num = (data.number - 32) / 1.8
+            convertedUnit = {
+                number: num.toFixed(1),
+                unit: '°C'
+            }
+            break
+        }
+        case 'oz': {
+            num = data.number * 28.34952
+            convertedUnit = {
+                number: num.toFixed(1),
+                unit: 'g'
+            }
+            break
+        }
+        default: convertedUnit = false;
+    }
+    // console.log(JSON.stringify(convertedUnit));
+    return convertedUnit
+}
+
+
+
+
+function getConvertedUnit(text) {
     let unitText = ''
     let numberString = ''
     let unitObject = {}
@@ -29,24 +84,25 @@ function convertUnit(text) {
     let pattern = /^[0-9]+$/;
 
     text = text.trim()
-    //console.log('Text: '+text);
     
     for (let i=0; i<text.length; i++) {
-        if (pattern.test(text[i])) {
+        if (!pattern.test(text[0])) {
+            return false
+        } else if (pattern.test(text[i])) {
             numberString = numberString.concat('', text[i])
-            console.log(numberString);
         }
 
-        unitText = text.slice(numberString.length, text.length-1)
-
+        unitText = text.slice(numberString.length, text.length).trim()
         unitObject = {
             number: numberString,
             unit: unitText
         }
-        console.log(JSON.stringify(unitObject));
     }
+    unitObject = convertUnit(unitObject)
     return unitObject
 }
+
+
 
 function closePopBoy() {
     document.querySelector('body').removeChild(extMainContainer)
@@ -54,11 +110,14 @@ function closePopBoy() {
 }
 
 
+
 document.onkeydown = e => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' && highlightIsOn) {
         closePopBoy()
     }
 }
+
+
 
 document.addEventListener('mouseup', (e) => {
     let pos = {
@@ -70,8 +129,7 @@ document.addEventListener('mouseup', (e) => {
 
     let selection = window.getSelection().toString()
     selection = selection.trim()
-    //let isUnit = convertUnit(selection)
-    //console.log(isUnit);
+    let isUnit = getConvertedUnit(selection)
     if (selection.length > 0 && !highlightIsOn) {
         chrome.storage.local.set({
             name: selection
@@ -85,8 +143,18 @@ document.addEventListener('mouseup', (e) => {
         highlightIsOn = false
     }
     
+    if (isUnit != false) {
+        extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`
+        extMainContainer.appendChild(extUnitConv)
+        console.log(isUnit);
+    } else {
+        extMainContainer.removeChild(extUnitConv)
+    }
 });
 
+/**
+ * Event listener section
+ */
 
 extCopyButton.addEventListener('mousedown', () => {
     chrome.runtime.sendMessage({

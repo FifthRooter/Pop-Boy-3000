@@ -1,3 +1,4 @@
+
 chrome.runtime.onInstalled.addListener(() => {
     chrome.storage.local.set({
         name: 'Tom'
@@ -57,7 +58,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
             sendResponse({message: 'success'})
         })
-
+        
         return true
     } else if (request.message === 'open_url') {
         console.log('open url');
@@ -75,7 +76,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         //     "url": 'https://www.duckduckgo.com/?q='+request.payload
         //   });
         chrome.search.query({disposition: "NEW_TAB", text: request.payload})
-
         return true
     }
 })

@@ -3,27 +3,121 @@ const extName = document.createElement('DIV')
 const extInput = document.createElement('INPUT')
 const extSearchButton = document.createElement('DIV')
 const extCopyButton = document.createElement('DIV')
+const extUnitConv = document.createElement('DIV')
+
 
 let highlightIsOn = false
 extMainContainer.classList.add('ext-main')
 extName.id = 'ext-name'
-//extInput.id = 'ext-input'
 extSearchButton.id = 'ext-btn'
 extCopyButton.id = 'ext-btn'
+extUnitConv.id = 'ext-unit'
 
-//extName.innerHTML = 'Hello NAME'
 extSearchButton.innerHTML = 'Search'
 extCopyButton.innerHTML = 'Copy'
 
 extMainContainer.appendChild(extName)
-//extMainContainer.appendChild(extInput)
 extMainContainer.appendChild(extCopyButton)
 extMainContainer.appendChild(extSearchButton)
+
+
+
+function convertUnit(data) {
+    let convertedUnit = {}
+    let num
+
+    switch (data.unit) {
+        case 'inch': {
+            num = data.number * 2.54
+            convertedUnit = {
+                number: num.toFixed(2),
+                unit: 'cm'
+            }
+            break
+        }
+        case 'mile': {
+            num = data.number * 1.609344
+            convertedUnit = {
+                number: num.toFixed(2),
+                unit: 'km'
+            }
+            break
+        }
+        case 'miles': {
+            num = data.number * 1.609344
+            convertedUnit = {
+                number: num.toFixed(2),
+                unit: 'km'
+            }
+            break
+        }
+        case 'F': {
+            num = (data.number - 32) / 1.8
+            convertedUnit = {
+                number: num.toFixed(1),
+                unit: '°C'
+            }
+            break
+        }
+        case 'oz': {
+            num = data.number * 28.34952
+            convertedUnit = {
+                number: num.toFixed(1),
+                unit: 'g'
+            }
+            break
+        }
+        default: convertedUnit = false;
+    }
+    // console.log(JSON.stringify(convertedUnit));
+    return convertedUnit
+}
+
+
+
+
+function getConvertedUnit(text) {
+    let unitText = ''
+    let numberString = ''
+    let unitObject = {}
+    // let pattern = /^\d+$/;
+    let pattern = /^[0-9]+$/;
+
+    text = text.trim()
+    
+    for (let i=0; i<text.length; i++) {
+        if (!pattern.test(text[0])) {
+            return false
+        } else if (pattern.test(text[i])) {
+            numberString = numberString.concat('', text[i])
+        }
+
+        unitText = text.slice(numberString.length, text.length).trim()
+        unitObject = {
+            number: numberString,
+            unit: unitText
+        }
+    }
+    unitObject = convertUnit(unitObject)
+    return unitObject
+}
+
+
 
 function closePopBoy() {
     document.querySelector('body').removeChild(extMainContainer)
     highlightIsOn = false
 }
+
+
+
+document.onkeydown = e => {
+    if (e.key === 'Escape' && highlightIsOn) {
+        closePopBoy()
+    }
+}
+
+
 
 document.addEventListener('mouseup', (e) => {
     let pos = {
@@ -35,6 +129,7 @@ document.addEventListener('mouseup', (e) => {
 
     let selection = window.getSelection().toString()
     selection = selection.trim()
+    let isUnit = getConvertedUnit(selection)
     if (selection.length > 0 && !highlightIsOn) {
         chrome.storage.local.set({
             name: selection
@@ -48,8 +143,18 @@ document.addEventListener('mouseup', (e) => {
         highlightIsOn = false
     }
     
+    if (isUnit != false) {
+        extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`
+        extMainContainer.appendChild(extUnitConv)
+        console.log(isUnit);
+    } else {
+        extMainContainer.removeChild(extUnitConv)
+    }
 });
 
+/**
+ * Event listener section
+ */
 
 extCopyButton.addEventListener('mousedown', () => {
     chrome.runtime.sendMessage({
@@ -79,40 +184,3 @@ extSearchButton.addEventListener('mousedown', () => {
         }
     })
 })
-
-// chrome.runtime.sendMessage({
-//     message: 'get_name'
-// }, res => {
-//     if (res.message === 'success') {
-//         extName.innerHTML = `{res.payload}`
-//     }
-// })
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//     if (request.message === 'change_name') {
-//         extName.innerHTML = `Hello ${request.payload}`
-//     }
-//     sendResponse(() => {
-//         return
-//     })
-
-// })
-
-// extButton.addEventListener('click', () => {
-//     chrome.runtime.sendMessage({
-//         message: 'change_name',
-//         payload: extInput.value
-//     }, res => {
-//         if (res.message === 'success') {
-//             extName.innerHTML = `Hello ${extInput.value}`
-//         }
-//     })
-// })
-
-
-
-// TODO
-// create onmouseup event, extract cursor position
-// set showPop to true
-// if true, show the PopBoy html element
-// also check if selection isn't empty and if it has units

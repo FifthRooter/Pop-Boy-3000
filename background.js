@@ -57,7 +57,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
             sendResponse({message: 'success'})
         })
-
+        
         return true
     } else if (request.message === 'open_url') {
         console.log('open url');

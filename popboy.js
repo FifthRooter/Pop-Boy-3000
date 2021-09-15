@@ -1,28 +1,63 @@
+// import convertUnit from "./helpers/convertUnit"
+
 const extMainContainer = document.createElement('DIV')
 const extName = document.createElement('DIV')
 const extInput = document.createElement('INPUT')
 const extSearchButton = document.createElement('DIV')
 const extCopyButton = document.createElement('DIV')
+const extUnitConv = document.createElement('DIV')
+
 
 let highlightIsOn = false
 extMainContainer.classList.add('ext-main')
 extName.id = 'ext-name'
-//extInput.id = 'ext-input'
 extSearchButton.id = 'ext-btn'
 extCopyButton.id = 'ext-btn'
 
-//extName.innerHTML = 'Hello NAME'
 extSearchButton.innerHTML = 'Search'
 extCopyButton.innerHTML = 'Copy'
 
 extMainContainer.appendChild(extName)
-//extMainContainer.appendChild(extInput)
 extMainContainer.appendChild(extCopyButton)
 extMainContainer.appendChild(extSearchButton)
+
+function convertUnit(text) {
+    let unitText = ''
+    let numberString = ''
+    let unitObject = {}
+    // let pattern = /^\d+$/;
+    let pattern = /^[0-9]+$/;
+
+    text = text.trim()
+    //console.log('Text: '+text);
+    
+    for (let i=0; i<text.length; i++) {
+        if (pattern.test(text[i])) {
+            numberString = numberString.concat('', text[i])
+            console.log(numberString);
+        }
+
+        unitText = text.slice(numberString.length, text.length-1)
+
+        unitObject = {
+            number: numberString,
+            unit: unitText
+        }
+        console.log(JSON.stringify(unitObject));
+    }
+    return unitObject
+}
 
 function closePopBoy() {
     document.querySelector('body').removeChild(extMainContainer)
     highlightIsOn = false
+}
+
+
+document.onkeydown = e => {
+    if (e.key === 'Escape') {
+        closePopBoy()
+    }
 }
 
 document.addEventListener('mouseup', (e) => {
@@ -35,6 +70,8 @@ document.addEventListener('mouseup', (e) => {
 
     let selection = window.getSelection().toString()
     selection = selection.trim()
+    //let isUnit = convertUnit(selection)
+    //console.log(isUnit);
     if (selection.length > 0 && !highlightIsOn) {
         chrome.storage.local.set({
             name: selection
@@ -79,40 +116,3 @@ extSearchButton.addEventListener('mousedown', () => {
         }
     })
 })
-
-// chrome.runtime.sendMessage({
-//     message: 'get_name'
-// }, res => {
-//     if (res.message === 'success') {
-//         extName.innerHTML = `{res.payload}`
-//     }
-// })
-
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//     if (request.message === 'change_name') {
-//         extName.innerHTML = `Hello ${request.payload}`
-//     }
-//     sendResponse(() => {
-//         return
-//     })
-
-// })
-
-// extButton.addEventListener('click', () => {
-//     chrome.runtime.sendMessage({
-//         message: 'change_name',
-//         payload: extInput.value
-//     }, res => {
-//         if (res.message === 'success') {
-//             extName.innerHTML = `Hello ${extInput.value}`
-//         }
-//     })
-// })
-
-
-
-// TODO
-// create onmouseup event, extract cursor position
-// set showPop to true
-// if true, show the PopBoy html element
-// also check if selection isn't empty and if it has units

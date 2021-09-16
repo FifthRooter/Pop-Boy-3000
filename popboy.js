@@ -112,7 +112,7 @@ function closePopBoy() {
 
 
 document.onkeydown = e => {
-    if (e.key === 'Escape' && highlightIsOn) {
+    if (e.key && highlightIsOn) {
         closePopBoy()
     }
 }

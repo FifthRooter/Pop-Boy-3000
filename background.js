@@ -1,9 +1,10 @@
-
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({
-        name: 'Tom'
-    })
+    // chrome.storage.local.set({
+    //     name: 'Tom'
+    // })
 })
+
+
 
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -76,6 +77,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         //     "url": 'https://www.duckduckgo.com/?q='+request.payload
         //   });
         chrome.search.query({disposition: "NEW_TAB", text: request.payload})
+        return true
+    } else if (request.message === 'get_fiat') {
+        chrome.storage.local.get('fiatCurrencies', data => {
+            if (chrome.runtime.lastError) {
+                sendResponse({
+                    message: 'fail'
+                })
+                return
+            }
+            sendResponse({
+                message: 'success',
+                payload: data.fiatCurrencies
+            })
+        })
+
         return true
     }
 })

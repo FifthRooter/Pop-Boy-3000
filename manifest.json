@@ -1,7 +1,7 @@
 {
-    "name": "Test extension",
-    "description": "Bla bla bla",
-    "version": "0.1.0",
+    "name": "Pop-Boy 3000",
+    "description": "Simple popup bar for Chromium browsers, which shows up under cursor after text has been highlighted. You can Copy, Search, and see unit/currency conversions.",
+    "version": "0.2.0",
     "manifest_version": 3,
     "background": {
         "service_worker": "./background.js",
@@ -11,6 +11,7 @@
         "default_popup": "./popup/popup.html"
     },
     "options_page": "./options/options.html",
+    "icons": {"128": "icon.png"},
     "permissions": [
         "activeTab",
         "tabs",

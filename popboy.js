@@ -141,23 +141,29 @@ function getConvertedUnit(text, callback) {
     let unitText = ''
     let numberString = ''
     let unitObject = {}
-    let isUnit = false
     let conversionRate = 0.69
     let pattern = /^[0-9]+$/;
+    let doNotConvert = true
 
     text = text.trim()
     
     for (let i=0; i<text.length; i++) {
         if (!pattern.test(text[0])) {
+            doNotConvert = true
         } else if (pattern.test(text[i])) {
             numberString = numberString.concat('', text[i])
+            doNotConvert = false
         }
 
-        unitText = text.slice(numberString.length, text.length).trim()
-        unitObject = {
-            number: numberString,
-            unit: unitText,
-            conversionRate
+        if (doNotConvert) {
+            unitObject = {}
+        } else {
+            unitText = text.slice(numberString.length, text.length).trim()
+            unitObject = {
+                number: numberString,
+                unit: unitText,
+                conversionRate
+            }
         }
     }
     unitObject = convertUnit(unitObject, (res) => {
@@ -192,9 +198,7 @@ document.addEventListener('mouseup', (e) => {
 
     let selection = window.getSelection().toString()
     selection = selection.trim()
-    console.log('selection: ' + selection);
-    console.log('prevSelection: ' + prevSelection);
-    if (selection.length === 0) {
+    if (selection.length === 0 && highlightIsOn) {
         closePopBoy()
     }
     getConvertedUnit(selection, (isUnit) => {
@@ -205,18 +209,15 @@ document.addEventListener('mouseup', (e) => {
             highlightIsOn = true
             document.querySelector('body').appendChild(extMainContainer)
         } else {
-            if (document.getElementById('ext-name') !== null || selection === prevSelection) {
+            if (document.getElementById('ext-name') !== null && selection === prevSelection) {
                 closePopBoy()
             }
             highlightIsOn = false
         }
-        
         if (Object.entries(isUnit).length !== 0) {
-            console.log(isUnit);
-            console.log(Object.entries(isUnit).length);
             extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`
             extMainContainer.appendChild(extUnitConv)
-        } else if (document.getElementById(extUnitConv) !== null) {
+        } else if (document.getElementById(extUnitConv.id) !== null && Object.entries(isUnit).length === 0) {
             extMainContainer.removeChild(extUnitConv)
         }
 

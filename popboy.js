@@ -5,7 +5,7 @@ const extSearchButton = document.createElement('DIV')
 const extCopyButton = document.createElement('DIV')
 const extUnitConv = document.createElement('DIV')
 
-
+let prevSelection = ''
 let highlightIsOn = false
 extMainContainer.classList.add('ext-main')
 extName.id = 'ext-name'
@@ -192,18 +192,20 @@ document.addEventListener('mouseup', (e) => {
 
     let selection = window.getSelection().toString()
     selection = selection.trim()
+    console.log('selection: ' + selection);
+    console.log('prevSelection: ' + prevSelection);
     if (selection.length === 0) {
         closePopBoy()
     }
     getConvertedUnit(selection, (isUnit) => {
-        if (selection.length > 0 && !highlightIsOn) {
+        if (selection.length > 0 && selection !== prevSelection) {
             chrome.storage.local.set({
                 name: selection
             })
             highlightIsOn = true
             document.querySelector('body').appendChild(extMainContainer)
         } else {
-            if (document.getElementById('ext-name') !== null) {
+            if (document.getElementById('ext-name') !== null || selection === prevSelection) {
                 closePopBoy()
             }
             highlightIsOn = false
@@ -217,6 +219,8 @@ document.addEventListener('mouseup', (e) => {
         } else if (document.getElementById(extUnitConv) !== null) {
             extMainContainer.removeChild(extUnitConv)
         }
+
+        prevSelection = selection
     })
 });
 

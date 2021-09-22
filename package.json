@@ -1,0 +1,20 @@
+{
+  "name": "pop-boy-3000",
+  "version": "1.0.0",
+  "description": "Simple popup bar for Chromium browsers, which shows up under cursor after text has been highlighted. You can Copy, Search, and see unit/currency conversions.",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node utils/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FifthRooter/pop-boy-3000.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.53.0",
+    "webpack-cli": "^4.8.0"
+  }
+}

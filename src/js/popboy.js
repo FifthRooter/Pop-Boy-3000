@@ -43,6 +43,9 @@ setTimeout(() => {
     })
 }, 12000);
 
+// TODO make the currency update on daily intervals
+// TODO make crypto update on hourly interval
+
 function isCurrency(data, callback) {
 
     let currencyPayload = {

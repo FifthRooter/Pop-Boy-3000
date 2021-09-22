@@ -1,18 +1,85 @@
-export default function convertUnit(text) {
-    // text = text.trim()
-    // if (text[text.length-1] !== /^[a-zA-Z]+$/) {
-    //     return false
-    // }
-    // for (let i=0; i<text.length; i++) {
-        
-    // }
-    console.log(text);
+import { getFiat } from "./runtimeApi";
+
+function getCurrency(data, callback) {
+  let currencyPayload = {
+    isCurrency: false,
+    conversionRate: 0,
+    currency: data,
+  };
+
+  getFiat((payload) => {
+    currencyPayload.isCurrency = data in payload;
+    if (currencyPayload.isCurrency) {
+      currencyPayload.conversionRate = payload[data].inverseRate;
+      callback(currencyPayload);
+    } else {
+      callback(currencyPayload);
+    }
+  });
 }
 
+export default function convertUnit(data, callback) {
+  let convertedUnit = {};
+  let num;
 
-// 1) check if last element of the string is a non-number (can be a letter or a "." or a "°"): if it is, continue with following steps, otherwise don't return false
-// 2) iterate through the string element by element using regex to check if it's a number
-// 3) once regex detects a non-number, slice from 0 to the index before the first non-number, make it into var
-// 4) use regex to detect if each element is a non-number, otherwise return false
+  getCurrency(data.unit, (res) => {
+    if (res.isCurrency) {
+      data.unit = "currency";
+    }
 
-// Alternative and more simplistic approach is to follow steps 1-3, then slice the rest of the string, lowercase it, remove degree symbol or period, and run it through the switch cases
+    switch (data.unit) {
+      case "inch": {
+        num = data.number * 2.54;
+        convertedUnit = {
+          number: num.toFixed(2),
+          unit: "cm",
+        };
+        break;
+      }
+      case "mile": {
+        num = data.number * 1.609344;
+        convertedUnit = {
+          number: num.toFixed(2),
+          unit: "km",
+        };
+        break;
+      }
+      case "miles": {
+        num = data.number * 1.609344;
+        convertedUnit = {
+          number: num.toFixed(2),
+          unit: "km",
+        };
+        break;
+      }
+      case "F": {
+        num = (data.number - 32) / 1.8;
+        convertedUnit = {
+          number: num.toFixed(1),
+          unit: "°C",
+        };
+        break;
+      }
+      case "oz": {
+        num = data.number * 28.34952;
+        convertedUnit = {
+          number: num.toFixed(1),
+          unit: "g",
+        };
+        break;
+      }
+      case "currency": {
+        num = data.number * res.conversionRate;
+        convertedUnit = {
+          number: num.toFixed(2),
+          unit: "eur",
+        };
+        break;
+      }
+      default: {
+        convertedUnit = {};
+      }
+    }
+    callback(convertedUnit);
+  });
+}

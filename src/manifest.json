@@ -4,14 +4,14 @@
   "version": "0.2.0",
   "manifest_version": 3,
   "background": {
-    "service_worker": "./background.js",
+    "service_worker": "js/background.js",
     "type": "module"
   },
   "action": {
     "default_popup": "popup.html"
   },
   "options_page": "options.html",
-  "icons": { "128": "icon.png" },
+  "icons": { "128": "img/icon.png" },
   "permissions": ["activeTab", "tabs", "storage", "scripting", "search"],
   "host_permissions": ["*://*/*"]
 }

@@ -1,259 +1,128 @@
-const extMainContainer = document.createElement('DIV')
-const extName = document.createElement('DIV')
-const extInput = document.createElement('INPUT')
-const extSearchButton = document.createElement('DIV')
-const extCopyButton = document.createElement('DIV')
-const extUnitConv = document.createElement('DIV')
+import updateExchangeRates from "./helpers/updateExchangeRates";
+import getConvertedUnit from "./helpers/getConvertedUnit";
+import { getHighlight, openUrl, setHighlight } from "./helpers/runtimeApi";
 
-let prevSelection = ''
-let highlightIsOn = false
-extMainContainer.classList.add('ext-main')
-extName.id = 'ext-name'
-extSearchButton.id = 'ext-btn'
-extCopyButton.id = 'ext-btn'
-extUnitConv.id = 'ext-unit'
+// Create elements
+const extMainContainer = document.createElement("DIV");
+const extName = document.createElement("DIV");
+const extInput = document.createElement("INPUT");
+const extSearchButton = document.createElement("DIV");
+const extCopyButton = document.createElement("DIV");
+const extUnitConv = document.createElement("DIV");
 
-extSearchButton.innerHTML = 'Search'
-extCopyButton.innerHTML = 'Copy'
+// Variables
+let prevSelection = "";
+let highlightIsOn = false;
+let fiatUpdateFrequencyInHours = 8;
 
-extMainContainer.appendChild(extName)
-extMainContainer.appendChild(extCopyButton)
-extMainContainer.appendChild(extSearchButton)
+// Element id's
+extMainContainer.classList.add("ext-main");
+extName.id = "ext-name";
+extSearchButton.id = "ext-btn";
+extCopyButton.id = "ext-btn";
+extUnitConv.id = "ext-unit";
 
-async function fetchFiatExchangeRates() {
-    await fetch('https://www.floatrates.com/daily/eur.json')
-        .then(res => res.json())
-        .then(currencies => {
-             chrome.storage.local.set({
-                fiatCurrencies: currencies
-            })
-        })
-}
+// Populate button text
+extSearchButton.innerHTML = "Search";
+extCopyButton.innerHTML = "Copy";
 
+// Populate main element with children
+extMainContainer.appendChild(extName);
+extMainContainer.appendChild(extCopyButton);
+extMainContainer.appendChild(extSearchButton);
+
+/*
+Intervals for fetching fiat and crypto currency rates
+to keep them up-to-date. For fiat the rates don't change much
+throughout the day, so those can be fetched only a few times a day,
+but crypto is more volatile, and changes by the hour, so should be
+updated every hour.
+*/
+// Fetch fiat rate first thing after extension is booted up
 setTimeout(() => {
-    fetchFiatExchangeRates()
+  updateExchangeRates();
 }, 1000);
 
-setTimeout(() => {
-    chrome.runtime.sendMessage({
-        message: 'get_fiat'
-    }, res => {
-        if (res.message === 'success') {
-        }
-    })
-}, 12000);
+// Fetch fiat exchange rates every 8h
+setInterval(() => {
+  updateExchangeRates();
+}, 1000 * 60 * 60 * fiatUpdateFrequencyInHours);
 
-// TODO make the currency update on daily intervals
 // TODO make crypto update on hourly interval
 
-function isCurrency(data, callback) {
-
-    let currencyPayload = {
-        isCurrency: false,
-        conversionRate: 0.2,
-        currency: data
-    }
-   
-    chrome.runtime.sendMessage({
-        message: 'get_fiat'
-    }, res => {
-        if (res.message === 'success') {
-            currencyPayload.isCurrency = data in res.payload
-            if (currencyPayload.isCurrency) {
-                currencyPayload.conversionRate = res.payload[data].inverseRate
-                callback(currencyPayload)
-            } else {
-                callback(currencyPayload)
-            }
-        }
-    })
-}
-
-function convertUnit(data, callback) {
-    let convertedUnit = {}
-    let num
-
-
-    isCurrency(data.unit, (res) => { 
-        if (res.isCurrency) {
-            data.unit = 'currency'
-        }
-        
-
-        switch (data.unit) {
-            case 'inch': {
-                num = data.number * 2.54
-                convertedUnit = {
-                    number: num.toFixed(2),
-                    unit: 'cm'
-                }
-                break
-            }
-            case 'mile': {
-                num = data.number * 1.609344
-                convertedUnit = {
-                    number: num.toFixed(2),
-                    unit: 'km'
-                }
-                break
-            }
-            case 'miles': {
-                num = data.number * 1.609344
-                convertedUnit = {
-                    number: num.toFixed(2),
-                    unit: 'km'
-                }
-                break
-            }
-            case 'F': {
-                num = (data.number - 32) / 1.8
-                convertedUnit = {
-                    number: num.toFixed(1),
-                    unit: '°C'
-                }
-                break
-            }
-            case 'oz': {
-                num = data.number * 28.34952
-                convertedUnit = {
-                    number: num.toFixed(1),
-                    unit: 'g'
-                }
-                break
-            }
-            case 'currency': {
-                num = data.number * res.conversionRate
-                convertedUnit = {
-                    number: num.toFixed(2),
-                    unit: 'eur'
-                }
-                break
-            }
-            default: {
-                convertedUnit = {}
-            }
-        }
-        callback(convertedUnit)
-    })   
-}
-
-
-
-
-function getConvertedUnit(text, callback) {
-    let unitText = ''
-    let numberString = ''
-    let unitObject = {}
-    let conversionRate = 0.69
-    let pattern = /^[0-9]+$/;
-    let doNotConvert = true
-
-    text = text.trim()
-    
-    for (let i=0; i<text.length; i++) {
-        if (!pattern.test(text[0])) {
-            doNotConvert = true
-        } else if (pattern.test(text[i])) {
-            numberString = numberString.concat('', text[i])
-            doNotConvert = false
-        }
-
-        if (doNotConvert) {
-            unitObject = {}
-        } else {
-            unitText = text.slice(numberString.length, text.length).trim()
-            unitObject = {
-                number: numberString,
-                unit: unitText,
-                conversionRate
-            }
-        }
-    }
-    unitObject = convertUnit(unitObject, (res) => {
-        callback(res)
-    })
-}
-
-
+/* 
+Functions
+*/
 
 function closePopBoy() {
-    document.querySelector('body').removeChild(extMainContainer)
-    highlightIsOn = false
+  document.querySelector("body").removeChild(extMainContainer);
+  highlightIsOn = false;
 }
 
+function handleSelection(e) {
+  let pos = {
+    x: e.pageX + "px",
+    y: e.pageY + 30 + "px",
+  };
+  extMainContainer.style.top = pos.y;
+  extMainContainer.style.left = pos.x;
 
-
-document.onkeydown = e => {
-    if (e.key && highlightIsOn) {
-        closePopBoy()
+  let selection = window.getSelection().toString();
+  selection = selection.trim();
+  if (selection.length === 0 && highlightIsOn) {
+    closePopBoy();
+  }
+  getConvertedUnit(selection, (isUnit) => {
+    if (selection.length > 0 && selection !== prevSelection) {
+      setHighlight(selection);
+      highlightIsOn = true;
+      document.querySelector("body").appendChild(extMainContainer);
+    } else {
+      if (
+        document.getElementById("ext-name") !== null &&
+        selection === prevSelection
+      ) {
+        closePopBoy();
+      }
+      highlightIsOn = false;
     }
+    if (Object.entries(isUnit).length !== 0) {
+      extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`;
+      extMainContainer.appendChild(extUnitConv);
+    } else if (
+      document.getElementById(extUnitConv.id) !== null &&
+      Object.entries(isUnit).length === 0
+    ) {
+      extMainContainer.removeChild(extUnitConv);
+    }
+
+    prevSelection = selection;
+  });
 }
 
+/* 
+Event listeners
+*/
 
-
-document.addEventListener('mouseup', (e) => {
-    let pos = {
-        x: e.pageX+'px',
-        y: e.pageY+30+'px'
-    }
-    extMainContainer.style.top = pos.y
-    extMainContainer.style.left = pos.x
-
-    let selection = window.getSelection().toString()
-    selection = selection.trim()
-    if (selection.length === 0 && highlightIsOn) {
-        closePopBoy()
-    }
-    getConvertedUnit(selection, (isUnit) => {
-        if (selection.length > 0 && selection !== prevSelection) {
-            chrome.storage.local.set({
-                name: selection
-            })
-            highlightIsOn = true
-            document.querySelector('body').appendChild(extMainContainer)
-        } else {
-            if (document.getElementById('ext-name') !== null && selection === prevSelection) {
-                closePopBoy()
-            }
-            highlightIsOn = false
-        }
-        if (Object.entries(isUnit).length !== 0) {
-            extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`
-            extMainContainer.appendChild(extUnitConv)
-        } else if (document.getElementById(extUnitConv.id) !== null && Object.entries(isUnit).length === 0) {
-            extMainContainer.removeChild(extUnitConv)
-        }
-
-        prevSelection = selection
-    })
+document.addEventListener("mouseup", (e) => {
+  handleSelection(e);
 });
 
-/**
- * Event listener section
- */
+document.onkeydown = (e) => {
+  if (e.key && highlightIsOn) {
+    closePopBoy();
+  }
+};
 
-extCopyButton.addEventListener('mousedown', () => {
-    chrome.runtime.sendMessage({
-        message: 'get_name'
-    }, res => {
-        if (res.message === 'success') {
-            let highlightedText = res.payload
-            navigator.clipboard.writeText(highlightedText).then(() => {})
-        }
-    })
-})
+extCopyButton.addEventListener("mousedown", () => {
+  getHighlight((payload) => {
+    navigator.clipboard.writeText(payload).then(() => {});
+  });
+});
 
-extSearchButton.addEventListener('mousedown', () => {
-    chrome.runtime.sendMessage({
-        message: 'get_name'
-    }, res => {
-        if (res.message === 'success') {
-            chrome.runtime.sendMessage({
-                message: 'open_url',
-                payload: res.payload
-            }, result => {
-            })
-            closePopBoy()
-        }
-    })
-})
+extSearchButton.addEventListener("mousedown", () => {
+  getHighlight((payload) => {
+    openUrl(payload);
+    closePopBoy();
+  });
+});

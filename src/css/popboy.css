@@ -1,0 +1,32 @@
+.ext-main {
+  width: fit-content;
+  height: 30px;
+  background-color: rgba(51, 47, 47, 1);
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  z-index: 9999999999;
+  color: rgba(224, 224, 224, 0.836);
+  border-radius: 5px;
+}
+
+#ext-name {
+  font-size: 12px;
+}
+
+#ext-btn {
+  margin: 4px 7px;
+  width: fit-content;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+#ext-unit {
+  margin: 4px 7px;
+  width: fit-content;
+  font-size: 14px;
+}

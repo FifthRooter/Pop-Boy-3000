@@ -1,5 +1,6 @@
 chrome.runtime.onInstalled.addListener(() => {
   // Do something first time extension is installed
+  // TODO Add multi-language/alphabet support
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -7,7 +8,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     chrome.scripting
       .insertCSS({
         target: { tabId },
-        files: ["./css/foreground-styles.css"],
+        files: ["./css/popboy.css"],
       })
       .then(() => {
         chrome.scripting

@@ -1,0 +1,1 @@
+chrome.runtime.sendMessage({message:"get_name"},(e=>{"success"===e.message&&(document.querySelector("div").innerHTML=`Hello ${e.payload}`)}));

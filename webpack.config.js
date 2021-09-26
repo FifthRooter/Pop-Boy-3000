@@ -2,6 +2,7 @@ const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
+  target: "node",
   entry: "./src/js/popboy.js",
   output: {
     path: path.resolve(__dirname, "./src/js/"),
@@ -14,7 +15,7 @@ module.exports = {
           from: "./src/",
           to: "../../build/",
           globOptions: {
-            ignore: ["**/helpers/**", "**/popboy.*"],
+            ignore: ["**/helpers/**", "**/popboy.js"],
           },
         },
       ],

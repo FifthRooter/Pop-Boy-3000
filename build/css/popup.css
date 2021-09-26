@@ -1,13 +1,28 @@
 body {
   width: 250px;
   height: 500px;
-  background-color: rgb(100, 90, 90);
-  color: white;
+  background-color: rgb(19, 17, 17);
+  color: rgb(148, 81, 5);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  font-size: 18px;
+}
+
+.setting-container {
+  display: flex;
+  width: 100%;
+  height: 4rem;
+  justify-content: space-around;
+  flex-direction: row;
+  vertical-align: middle;
+  margin: 5px 6px;
+}
+
+.toggle {
   align-items: center;
-  font-size: 14px;
+  display: flex;
+  margin: 0 8px;
 }
 
 /* The switch - the box around the slider */
@@ -51,11 +66,11 @@ body {
 }
 
 input:checked + .slider {
-  background-color: #2196f3;
+  background-color: rgb(148, 81, 5);
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196f3;
+  box-shadow: 0 0 1px rgb(148, 81, 5);
 }
 
 input:checked + .slider:before {

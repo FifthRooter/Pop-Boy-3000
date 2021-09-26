@@ -10,6 +10,15 @@ const extSearchButton = document.createElement("DIV");
 const extCopyButton = document.createElement("DIV");
 const extUnitConv = document.createElement("DIV");
 
+var link = document.createElement("link");
+link.setAttribute("rel", "stylesheet");
+link.setAttribute("type", "text/css");
+link.setAttribute(
+  "href",
+  "https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap"
+);
+document.head.appendChild(link);
+
 // Variables
 let prevSelection = "";
 let highlightIsOn = false;

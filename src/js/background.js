@@ -3,6 +3,11 @@ chrome.runtime.onInstalled.addListener(() => {
   // TODO Add multi-language/alphabet support
 });
 
+chrome.fontSettings.setFont({
+  genericFamily: "sansserif",
+  fontId: "Roboto",
+});
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && /^http/.test(tab.url)) {
     chrome.scripting

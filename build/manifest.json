@@ -12,6 +12,13 @@
   },
   "options_page": "options.html",
   "icons": { "128": "img/icon.png" },
-  "permissions": ["activeTab", "tabs", "storage", "scripting", "search"],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "scripting",
+    "search",
+    "fontSettings"
+  ],
   "host_permissions": ["*://*/*"]
 }

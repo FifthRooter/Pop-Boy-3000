@@ -26,3 +26,8 @@ This will bundle the relevant files into single ones, and copy other static file
 Then in your Chromium browser, go to Extensions page, turn on Developer Mode, and click Load Unpacked. Navigate to the build/ folder of the extension and click open.
 
 To use the extension, refresh existing tabs, or open new tabs.
+
+
+## Options popup
+
+It's possible to create a blacklist of websites on which to disable the popup, as it sometimes can get quite annoying and intrusive, for example when using browser based IDEs.

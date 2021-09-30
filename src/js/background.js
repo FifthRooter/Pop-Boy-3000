@@ -1,6 +1,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   // Do something first time extension is installed
   // TODO Add multi-language/alphabet support
+  console.log("hello");
 });
 
 chrome.fontSettings.setFont({
@@ -65,6 +66,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         message: "success",
         payload: data.fiatCurrencies,
       });
+    });
+
+    return true;
+  } else if (request.message === "get_current_tab") {
+    let currentTab = "";
+    async function getCurrentTab() {
+      let queryOptions = { active: true, currentWindow: true };
+      let [tab] = await chrome.tabs.query(queryOptions);
+      return tab;
+    }
+    currentTab = getCurrentTab();
+    sendResponse({
+      message: "success",
+      payload: currentTab,
     });
 
     return true;

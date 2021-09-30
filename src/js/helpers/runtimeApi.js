@@ -39,3 +39,14 @@ export function openUrl(payload) {
     (result) => {}
   );
 }
+
+export function getCurrentTab() {
+  chrome.runtime.sendMessage(
+    {
+      message: "get_current_tab",
+    },
+    (result) => {
+      console.log(JSON.stringify(result));
+    }
+  );
+}

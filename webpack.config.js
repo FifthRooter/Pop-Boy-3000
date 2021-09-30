@@ -3,6 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   target: "node",
+  mode: "production",
   entry: "./src/js/popboy.js",
   output: {
     path: path.resolve(__dirname, "./src/js/"),

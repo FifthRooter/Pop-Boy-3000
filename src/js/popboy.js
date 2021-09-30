@@ -1,6 +1,11 @@
 import updateExchangeRates from "./helpers/updateExchangeRates";
 import getConvertedUnit from "./helpers/getConvertedUnit";
-import { getHighlight, openUrl, setHighlight } from "./helpers/runtimeApi";
+import {
+  getHighlight,
+  openUrl,
+  setHighlight,
+  getCurrentTab,
+} from "./helpers/runtimeApi";
 
 // Create elements
 const extMainContainer = document.createElement("DIV");
@@ -50,6 +55,7 @@ updated every hour.
 // Fetch fiat rate first thing after extension is booted up
 setTimeout(() => {
   updateExchangeRates();
+  getCurrentTab();
 }, 1000);
 
 // Fetch fiat exchange rates every 8h

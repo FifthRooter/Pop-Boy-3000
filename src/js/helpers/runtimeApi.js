@@ -46,7 +46,12 @@ export function getCurrentTab() {
       message: "get_current_tab",
     },
     (result) => {
-      console.log(JSON.stringify(result));
+      if (res.message === "success") {
+        console.log(res.message);
+        console.log(JSON.stringify(result));
+      } else {
+        console.log("error!!!");
+      }
     }
   );
 }

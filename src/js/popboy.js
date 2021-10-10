@@ -11,9 +11,11 @@ import {
 const extMainContainer = document.createElement("DIV");
 const extName = document.createElement("DIV");
 const extInput = document.createElement("INPUT");
-const extSearchButton = document.createElement("DIV");
-const extCopyButton = document.createElement("DIV");
+const extSearchButton = document.createElement("BUTTON");
+const extCopyButton = document.createElement("BUTTON");
 const extUnitConv = document.createElement("DIV");
+
+//TODO make buttons buttons
 
 var link = document.createElement("link");
 link.setAttribute("rel", "stylesheet");
@@ -32,8 +34,8 @@ let fiatUpdateFrequencyInHours = 8;
 // Element id's
 extMainContainer.classList.add("ext-main");
 extName.id = "ext-name";
-extSearchButton.id = "ext-btn";
-extCopyButton.id = "ext-btn";
+extSearchButton.id = "btn-search";
+extCopyButton.id = "btn-copy";
 extUnitConv.id = "ext-unit";
 
 // Populate button text
@@ -56,7 +58,7 @@ updated every hour.
 setTimeout(() => {
   updateExchangeRates();
   getCurrentTab();
-}, 1000);
+}, 2000);
 
 // Fetch fiat exchange rates every 8h
 setInterval(() => {

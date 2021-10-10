@@ -45,10 +45,10 @@ export function getCurrentTab() {
     {
       message: "get_current_tab",
     },
-    (result) => {
+    (res) => {
       if (res.message === "success") {
         console.log(res.message);
-        console.log(JSON.stringify(result));
+        console.log(JSON.stringify(res));
       } else {
         console.log("error!!!");
       }

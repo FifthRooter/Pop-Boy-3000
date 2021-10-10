@@ -69,20 +69,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
 
     return true;
-  }
-  // else if (request.message === "get_current_tab") {
-  //   let currentTab = "";
-  //   async function getCurrentTab() {
-  //     let queryOptions = { active: true, currentWindow: true };
-  //     let [tab] = await chrome.tabs.query(queryOptions);
-  //     return tab;
-  //   }
-  //   currentTab = getCurrentTab();
-  //   sendResponse({
-  //     message: "success",
-  //     payload: currentTab,
-  //   });
+  } else if (request.message === "get_current_tab") {
+    let queryOptions = { active: true, currentWindow: true };
 
-  //   return true;
-  // }
+    chrome.tabs.query(queryOptions, (tabs) => {
+      sendResponse({
+        message: "success",
+        payload: tabs[0].url,
+      });
+    });
+
+    return true;
+  }
 });

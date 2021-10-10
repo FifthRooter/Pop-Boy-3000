@@ -1,12 +1,10 @@
 chrome.runtime.onInstalled.addListener(() => {
   // Do something first time extension is installed
   // TODO Add multi-language/alphabet support
-  console.log("hello");
-});
-
-chrome.fontSettings.setFont({
-  genericFamily: "sansserif",
-  fontId: "Roboto",
+  // console.log("hello");
+  chrome.storage.local.set({
+    blocklist: [],
+  });
 });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
@@ -79,6 +77,20 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       });
     });
 
+    return true;
+  } else if (request.message === "get_blocklist") {
+    chrome.storage.local.get("blocklist", (data) => {
+      if (chrome.runtime.lastError) {
+        sendResponse({
+          message: "fail",
+        });
+        return;
+      }
+      sendResponse({
+        message: "success",
+        payload: data.blocklist,
+      });
+    });
     return true;
   }
 });

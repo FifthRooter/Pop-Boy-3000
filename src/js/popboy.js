@@ -5,6 +5,8 @@ import {
   openUrl,
   setHighlight,
   getCurrentTab,
+  saveToBlocklist,
+  getBlocklist,
 } from "./helpers/runtimeApi";
 
 // Create elements
@@ -14,8 +16,6 @@ const extInput = document.createElement("INPUT");
 const extSearchButton = document.createElement("BUTTON");
 const extCopyButton = document.createElement("BUTTON");
 const extUnitConv = document.createElement("DIV");
-
-//TODO make buttons buttons
 
 var link = document.createElement("link");
 link.setAttribute("rel", "stylesheet");
@@ -57,8 +57,7 @@ updated every hour.
 // Fetch fiat rate first thing after extension is booted up
 setTimeout(() => {
   updateExchangeRates();
-  getCurrentTab();
-}, 2000);
+}, 1000);
 
 // Fetch fiat exchange rates every 8h
 setInterval(() => {
@@ -132,6 +131,11 @@ document.onkeydown = (e) => {
 };
 
 extCopyButton.addEventListener("mousedown", () => {
+  getCurrentTab((payload) => {
+    console.log("current tab popboy: " + payload);
+    saveToBlocklist(payload);
+  });
+
   getHighlight((payload) => {
     navigator.clipboard.writeText(payload).then(() => {});
   });

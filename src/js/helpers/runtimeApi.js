@@ -1,3 +1,29 @@
+/////////////////
+//     Save    //
+/////////////////
+
+export function setHighlight(selection) {
+  chrome.storage.local.set({
+    highlight: selection,
+  });
+}
+
+export function saveToBlocklist(link) {
+  getBlocklist((res) => {
+    let blocklistArray;
+    blocklistArray = res;
+    let pathname = new URL(link).hostname;
+    console.log(pathname);
+    chrome.storage.local.set({
+      blocklist: blocklistArray,
+    });
+  });
+}
+
+/////////////////
+//     Get     //
+/////////////////
+
 export function getFiat(callback) {
   chrome.runtime.sendMessage(
     {
@@ -6,6 +32,21 @@ export function getFiat(callback) {
     (res) => {
       if (res.message === "success") {
         callback(res.payload);
+      }
+    }
+  );
+}
+
+export function getCurrentTab(callback) {
+  chrome.runtime.sendMessage(
+    {
+      message: "get_current_tab",
+    },
+    (res) => {
+      if (res.message === "success") {
+        callback(res.payload);
+      } else {
+        console.log("error!!!");
       }
     }
   );
@@ -24,11 +65,22 @@ export function getHighlight(callback) {
   );
 }
 
-export function setHighlight(selection) {
-  chrome.storage.local.set({
-    highlight: selection,
-  });
+export function getBlocklist(callback) {
+  chrome.runtime.sendMessage(
+    {
+      message: "get_blocklist",
+    },
+    (res) => {
+      if (res.message === "success") {
+        callback(res.payload);
+      }
+    }
+  );
 }
+
+/////////////////
+//    Action   //
+/////////////////
 
 export function openUrl(payload) {
   chrome.runtime.sendMessage(
@@ -37,21 +89,5 @@ export function openUrl(payload) {
       payload: payload,
     },
     (result) => {}
-  );
-}
-
-export function getCurrentTab() {
-  chrome.runtime.sendMessage(
-    {
-      message: "get_current_tab",
-    },
-    (res) => {
-      if (res.message === "success") {
-        console.log(res.message);
-        console.log(JSON.stringify(res));
-      } else {
-        console.log("error!!!");
-      }
-    }
   );
 }

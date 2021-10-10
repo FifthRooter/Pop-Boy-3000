@@ -5,3 +5,7 @@
 //         document.querySelector('div').innerHTML = `Hello ${res.payload}`
 //     }
 // })
+
+// document.getElementById("checkbox").onchange = function () {
+//   console.log("hello");
+// };

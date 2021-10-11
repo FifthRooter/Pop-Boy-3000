@@ -27,9 +27,12 @@
   border: none;
   outline: none;
   padding: 4px 7px;
+  background-color: rgba(51, 47, 47, 1);
+  color: rgba(224, 224, 224, 0.836);
 }
 
 #btn-search {
+  background-color: rgba(51, 47, 47, 1);
   display: block;
   width: 100%;
   height: 100%;
@@ -40,6 +43,7 @@
   border: none;
   outline: none;
   padding: 4px 7px;
+  color: rgba(224, 224, 224, 0.836);
 }
 
 #btn-search:hover,

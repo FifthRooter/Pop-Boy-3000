@@ -131,11 +131,6 @@ document.onkeydown = (e) => {
 };
 
 extCopyButton.addEventListener("mousedown", () => {
-  getCurrentTab((payload) => {
-    console.log("current tab popboy: " + payload);
-    saveToBlocklist(payload);
-  });
-
   getHighlight((payload) => {
     navigator.clipboard.writeText(payload).then(() => {});
   });

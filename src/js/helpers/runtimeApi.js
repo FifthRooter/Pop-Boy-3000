@@ -8,15 +8,30 @@ export function setHighlight(selection) {
   });
 }
 
-export function saveToBlocklist(link) {
+export function saveToBlocklist(payload) {
   getBlocklist((res) => {
     let blocklistArray;
+
     blocklistArray = res;
-    let pathname = new URL(link).hostname;
-    console.log(pathname);
+    let hostname = new URL(payload.link).hostname;
+
+    if (blocklistArray.filter((item) => item.name === hostname).length === 0) {
+      blocklistArray.push({
+        name: hostname,
+        isBlocklisted: payload.isBlocklisted,
+      });
+    } else {
+      let itemIndex;
+      blocklistArray.forEach((item, index) => {
+        item.name === hostname && (itemIndex = index);
+      });
+      blocklistArray[itemIndex].isBlocklisted = payload.isBlocklisted;
+    }
+
     chrome.storage.local.set({
       blocklist: blocklistArray,
     });
+    console.log(JSON.stringify(blocklistArray[0]));
   });
 }
 

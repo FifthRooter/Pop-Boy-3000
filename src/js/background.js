@@ -1,12 +1,24 @@
 chrome.runtime.onInstalled.addListener(() => {
   // Do something first time extension is installed
   // TODO Add multi-language/alphabet support
+  // console.log("hello");
+  chrome.storage.local.set({
+    blocklist: [],
+  });
 });
 
-chrome.fontSettings.setFont({
-  genericFamily: "sansserif",
-  fontId: "Roboto",
-});
+// chrome.tabs.onActivated.addListener((activeInfo) => {
+//   // chrome.tabs.get(activeInfo.tabId, function (tab) {
+//   //   console.log(tab.url);
+//   // });
+//   chrome.runtime.sendMessage(
+//     {
+//       message: "tab_changed",
+//       payload: "lol42069",
+//     },
+//     (res) => {}
+//   );
+// });
 
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && /^http/.test(tab.url)) {
@@ -67,6 +79,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       });
     });
 
+    return true;
+  } else if (request.message === "get_current_tab") {
+    let queryOptions = { active: true, currentWindow: true };
+
+    chrome.tabs.query(queryOptions, (tabs) => {
+      sendResponse({
+        message: "success",
+        payload: tabs[0].url,
+      });
+    });
+
+    return true;
+  } else if (request.message === "get_blocklist") {
+    chrome.storage.local.get("blocklist", (data) => {
+      if (chrome.runtime.lastError) {
+        sendResponse({
+          message: "fail",
+        });
+        return;
+      }
+      sendResponse({
+        message: "success",
+        payload: data.blocklist,
+      });
+    });
     return true;
   }
 });

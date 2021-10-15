@@ -1,13 +1,21 @@
 import updateExchangeRates from "./helpers/updateExchangeRates";
 import getConvertedUnit from "./helpers/getConvertedUnit";
-import { getHighlight, openUrl, setHighlight } from "./helpers/runtimeApi";
+import {
+  getHighlight,
+  openUrl,
+  setHighlight,
+  getCurrentTab,
+  saveToBlocklist,
+  getBlocklist,
+  isBlocklisted,
+} from "./helpers/runtimeApi";
 
 // Create elements
 const extMainContainer = document.createElement("DIV");
 const extName = document.createElement("DIV");
 const extInput = document.createElement("INPUT");
-const extSearchButton = document.createElement("DIV");
-const extCopyButton = document.createElement("DIV");
+const extSearchButton = document.createElement("BUTTON");
+const extCopyButton = document.createElement("BUTTON");
 const extUnitConv = document.createElement("DIV");
 
 var link = document.createElement("link");
@@ -27,8 +35,8 @@ let fiatUpdateFrequencyInHours = 8;
 // Element id's
 extMainContainer.classList.add("ext-main");
 extName.id = "ext-name";
-extSearchButton.id = "ext-btn";
-extCopyButton.id = "ext-btn";
+extSearchButton.id = "btn-search";
+extCopyButton.id = "btn-copy";
 extUnitConv.id = "ext-unit";
 
 // Populate button text
@@ -69,43 +77,61 @@ function closePopBoy() {
 }
 
 function handleSelection(e) {
-  let pos = {
-    x: e.pageX + "px",
-    y: e.pageY + 30 + "px",
-  };
-  extMainContainer.style.top = pos.y;
-  extMainContainer.style.left = pos.x;
+  let isSiteBlocked = false;
+  getBlocklist((res) => {
+    let blocklistArray;
+    blocklistArray = res;
 
-  let selection = window.getSelection().toString();
-  selection = selection.trim();
-  if (selection.length === 0 && highlightIsOn) {
-    closePopBoy();
-  }
-  getConvertedUnit(selection, (isUnit) => {
-    if (selection.length > 0 && selection !== prevSelection) {
-      setHighlight(selection);
-      highlightIsOn = true;
-      document.querySelector("body").appendChild(extMainContainer);
-    } else {
-      if (
-        document.getElementById("ext-name") !== null &&
-        selection === prevSelection
-      ) {
+    getCurrentTab((link) => {
+      let hostname = new URL(link).hostname;
+      blocklistArray.forEach((item, index) => {
+        item.name === hostname &&
+          (isSiteBlocked = blocklistArray[index].isBlocklisted);
+      });
+      let pos = {
+        x: e.pageX + "px",
+        y: e.pageY + 30 + "px",
+      };
+      extMainContainer.style.top = pos.y;
+      extMainContainer.style.left = pos.x;
+
+      let selection = window.getSelection().toString();
+      selection = selection.trim();
+      if (selection.length === 0 && highlightIsOn) {
         closePopBoy();
+        return;
       }
-      highlightIsOn = false;
-    }
-    if (Object.entries(isUnit).length !== 0) {
-      extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`;
-      extMainContainer.appendChild(extUnitConv);
-    } else if (
-      document.getElementById(extUnitConv.id) !== null &&
-      Object.entries(isUnit).length === 0
-    ) {
-      extMainContainer.removeChild(extUnitConv);
-    }
+      getConvertedUnit(selection, (isUnit) => {
+        if (
+          selection.length > 0 &&
+          selection !== prevSelection &&
+          !isSiteBlocked
+        ) {
+          setHighlight(selection);
+          highlightIsOn = true;
+          document.querySelector("body").appendChild(extMainContainer);
+        } else {
+          if (
+            document.getElementById("ext-name") !== null &&
+            selection === prevSelection
+          ) {
+            closePopBoy();
+          }
+          highlightIsOn = false;
+        }
+        if (Object.entries(isUnit).length !== 0) {
+          extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`;
+          extMainContainer.appendChild(extUnitConv);
+        } else if (
+          document.getElementById(extUnitConv.id) !== null &&
+          Object.entries(isUnit).length === 0
+        ) {
+          extMainContainer.removeChild(extUnitConv);
+        }
 
-    prevSelection = selection;
+        prevSelection = selection;
+      });
+    });
   });
 }
 

@@ -1,3 +1,43 @@
+/////////////////
+//     Save    //
+/////////////////
+
+export function setHighlight(selection) {
+  chrome.storage.local.set({
+    highlight: selection,
+  });
+}
+
+export function saveToBlocklist(payload) {
+  getBlocklist((res) => {
+    let blocklistArray;
+
+    blocklistArray = res;
+    let hostname = new URL(payload.link).hostname;
+
+    if (blocklistArray.filter((item) => item.name === hostname).length === 0) {
+      blocklistArray.push({
+        name: hostname,
+        isBlocklisted: payload.isBlocklisted,
+      });
+    } else {
+      let itemIndex;
+      blocklistArray.forEach((item, index) => {
+        item.name === hostname && (itemIndex = index);
+      });
+      blocklistArray[itemIndex].isBlocklisted = payload.isBlocklisted;
+    }
+
+    chrome.storage.local.set({
+      blocklist: blocklistArray,
+    });
+  });
+}
+
+/////////////////
+//     Get     //
+/////////////////
+
 export function getFiat(callback) {
   chrome.runtime.sendMessage(
     {
@@ -6,6 +46,21 @@ export function getFiat(callback) {
     (res) => {
       if (res.message === "success") {
         callback(res.payload);
+      }
+    }
+  );
+}
+
+export function getCurrentTab(callback) {
+  chrome.runtime.sendMessage(
+    {
+      message: "get_current_tab",
+    },
+    (res) => {
+      if (res.message === "success") {
+        callback(res.payload);
+      } else {
+        console.log("error!!!");
       }
     }
   );
@@ -24,11 +79,37 @@ export function getHighlight(callback) {
   );
 }
 
-export function setHighlight(selection) {
-  chrome.storage.local.set({
-    highlight: selection,
+export function getBlocklist(callback) {
+  chrome.runtime.sendMessage(
+    {
+      message: "get_blocklist",
+    },
+    (res) => {
+      if (res.message === "success") {
+        callback(res.payload);
+      }
+    }
+  );
+}
+
+export function isBlocklisted(callback) {
+  getBlocklist((res) => {
+    let blocklistArray;
+    blocklistArray = res;
+
+    getCurrentTab((link) => {
+      let hostname = new URL(link).hostname;
+      blocklistArray.forEach((item, index) => {
+        item.name === hostname && callback(blocklistArray[index].isBlocklisted);
+      });
+      callback(false);
+    });
   });
 }
+
+/////////////////
+//    Action   //
+/////////////////
 
 export function openUrl(payload) {
   chrome.runtime.sendMessage(

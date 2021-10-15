@@ -31,7 +31,6 @@ export function saveToBlocklist(payload) {
     chrome.storage.local.set({
       blocklist: blocklistArray,
     });
-    console.log(JSON.stringify(blocklistArray[0]));
   });
 }
 

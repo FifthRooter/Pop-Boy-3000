@@ -7,6 +7,19 @@ chrome.runtime.onInstalled.addListener(() => {
   });
 });
 
+// chrome.tabs.onActivated.addListener((activeInfo) => {
+//   // chrome.tabs.get(activeInfo.tabId, function (tab) {
+//   //   console.log(tab.url);
+//   // });
+//   chrome.runtime.sendMessage(
+//     {
+//       message: "tab_changed",
+//       payload: "lol42069",
+//     },
+//     (res) => {}
+//   );
+// });
+
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && /^http/.test(tab.url)) {
     chrome.scripting

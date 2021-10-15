@@ -7,6 +7,7 @@ import {
   getCurrentTab,
   saveToBlocklist,
   getBlocklist,
+  isBlocklisted,
 } from "./helpers/runtimeApi";
 
 // Create elements
@@ -76,43 +77,61 @@ function closePopBoy() {
 }
 
 function handleSelection(e) {
-  let pos = {
-    x: e.pageX + "px",
-    y: e.pageY + 30 + "px",
-  };
-  extMainContainer.style.top = pos.y;
-  extMainContainer.style.left = pos.x;
+  let isSiteBlocked = false;
+  getBlocklist((res) => {
+    let blocklistArray;
+    blocklistArray = res;
 
-  let selection = window.getSelection().toString();
-  selection = selection.trim();
-  if (selection.length === 0 && highlightIsOn) {
-    closePopBoy();
-  }
-  getConvertedUnit(selection, (isUnit) => {
-    if (selection.length > 0 && selection !== prevSelection) {
-      setHighlight(selection);
-      highlightIsOn = true;
-      document.querySelector("body").appendChild(extMainContainer);
-    } else {
-      if (
-        document.getElementById("ext-name") !== null &&
-        selection === prevSelection
-      ) {
+    getCurrentTab((link) => {
+      let hostname = new URL(link).hostname;
+      blocklistArray.forEach((item, index) => {
+        item.name === hostname &&
+          (isSiteBlocked = blocklistArray[index].isBlocklisted);
+      });
+      let pos = {
+        x: e.pageX + "px",
+        y: e.pageY + 30 + "px",
+      };
+      extMainContainer.style.top = pos.y;
+      extMainContainer.style.left = pos.x;
+
+      let selection = window.getSelection().toString();
+      selection = selection.trim();
+      if (selection.length === 0 && highlightIsOn) {
         closePopBoy();
+        return;
       }
-      highlightIsOn = false;
-    }
-    if (Object.entries(isUnit).length !== 0) {
-      extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`;
-      extMainContainer.appendChild(extUnitConv);
-    } else if (
-      document.getElementById(extUnitConv.id) !== null &&
-      Object.entries(isUnit).length === 0
-    ) {
-      extMainContainer.removeChild(extUnitConv);
-    }
+      getConvertedUnit(selection, (isUnit) => {
+        if (
+          selection.length > 0 &&
+          selection !== prevSelection &&
+          !isSiteBlocked
+        ) {
+          setHighlight(selection);
+          highlightIsOn = true;
+          document.querySelector("body").appendChild(extMainContainer);
+        } else {
+          if (
+            document.getElementById("ext-name") !== null &&
+            selection === prevSelection
+          ) {
+            closePopBoy();
+          }
+          highlightIsOn = false;
+        }
+        if (Object.entries(isUnit).length !== 0) {
+          extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`;
+          extMainContainer.appendChild(extUnitConv);
+        } else if (
+          document.getElementById(extUnitConv.id) !== null &&
+          Object.entries(isUnit).length === 0
+        ) {
+          extMainContainer.removeChild(extUnitConv);
+        }
 
-    prevSelection = selection;
+        prevSelection = selection;
+      });
+    });
   });
 }
 

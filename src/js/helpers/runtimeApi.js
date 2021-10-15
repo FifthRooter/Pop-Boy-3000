@@ -92,6 +92,21 @@ export function getBlocklist(callback) {
   );
 }
 
+export function isBlocklisted(callback) {
+  getBlocklist((res) => {
+    let blocklistArray;
+    blocklistArray = res;
+
+    getCurrentTab((link) => {
+      let hostname = new URL(link).hostname;
+      blocklistArray.forEach((item, index) => {
+        item.name === hostname && callback(blocklistArray[index].isBlocklisted);
+      });
+      callback(false);
+    });
+  });
+}
+
 /////////////////
 //    Action   //
 /////////////////

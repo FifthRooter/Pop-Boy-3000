@@ -79,6 +79,9 @@ function closePopBoy() {
 function handleSelection(e) {
   let isSiteBlocked = false;
   getBlocklist((res) => {
+    setTimeout(() => {
+      closePopBoy();
+    }, 2000);
     let blocklistArray;
     blocklistArray = res;
 

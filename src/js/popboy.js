@@ -31,6 +31,7 @@ document.head.appendChild(link);
 let prevSelection = "";
 let highlightIsOn = false;
 let fiatUpdateFrequencyInHours = 8;
+let popboyDelayTimeout;
 
 // Element id's
 extMainContainer.classList.add("ext-main");
@@ -76,12 +77,18 @@ function closePopBoy() {
   highlightIsOn = false;
 }
 
+function setPopboyTimeout() {
+  popboyDelayTimeout = setTimeout(() => {
+    closePopBoy();
+  }, 1500);
+}
+
 function handleSelection(e) {
   let isSiteBlocked = false;
   getBlocklist((res) => {
-    setTimeout(() => {
-      closePopBoy();
-    }, 2000);
+    clearTimeout(popboyDelayTimeout);
+    setPopboyTimeout();
+
     let blocklistArray;
     blocklistArray = res;
 

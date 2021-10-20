@@ -25,7 +25,7 @@ let prevSelection = "";
 let highlightIsOn = false;
 let fiatUpdateFrequencyInHours = 8;
 let popboyDelayTimeout;
-let popboyExpirationIsOn = false;
+let popboyExpirationIsOn = true;
 
 // Element id's
 extMainContainer.classList.add("ext-main");

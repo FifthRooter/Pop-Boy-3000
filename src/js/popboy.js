@@ -9,19 +9,15 @@ import {
 } from "./helpers/runtimeApi";
 
 // Create elements
-const extMainContainer = document.createElement("DIV");
-const extName = document.createElement("DIV");
-const extSearchButton = document.createElement("BUTTON");
-const extCopyButton = document.createElement("BUTTON");
-const extUnitConv = document.createElement("DIV");
+const extMainContainer = document.createElement("div");
+const extName = document.createElement("div");
+const extSearchButton = document.createElement("button");
+const extCopyButton = document.createElement("button");
+const extUnitConv = document.createElement("button");
 
 var link = document.createElement("link");
 link.setAttribute("rel", "stylesheet");
 link.setAttribute("type", "text/css");
-link.setAttribute(
-  "href",
-  "https://fonts.googleapis.com/css2?family=Lato:wght@300&display=swap"
-);
 document.head.appendChild(link);
 
 // Variables
@@ -29,6 +25,7 @@ let prevSelection = "";
 let highlightIsOn = false;
 let fiatUpdateFrequencyInHours = 8;
 let popboyDelayTimeout;
+let popboyExpirationIsOn = false;
 
 // Element id's
 extMainContainer.classList.add("ext-main");
@@ -71,7 +68,6 @@ Functions
 */
 
 function closePopBoy() {
-  console.log(document.getElementById("closePopBoy()"));
   if (document.getElementById("ext-main")) {
     document.querySelector("body").removeChild(extMainContainer);
     highlightIsOn = false;
@@ -79,9 +75,11 @@ function closePopBoy() {
 }
 
 function setPopboyTimeout() {
-  popboyDelayTimeout = setTimeout(() => {
-    closePopBoy();
-  }, 1500);
+  if (popboyExpirationIsOn) {
+    popboyDelayTimeout = setTimeout(() => {
+      closePopBoy();
+    }, 1500);
+  }
 }
 
 function handleSelection(e) {
@@ -120,6 +118,7 @@ function handleSelection(e) {
         ) {
           setHighlight(selection);
           highlightIsOn = true;
+          extSearchButton.style.borderRadius = "0px 5px 5px 0px";
           document.querySelector("body").appendChild(extMainContainer);
         } else {
           if (
@@ -131,6 +130,7 @@ function handleSelection(e) {
           highlightIsOn = false;
         }
         if (Object.entries(isUnit).length !== 0) {
+          extSearchButton.style.borderRadius = "0";
           extUnitConv.innerHTML = `${isUnit.number} ${isUnit.unit}`;
           extMainContainer.appendChild(extUnitConv);
         } else if (
@@ -162,7 +162,9 @@ document.onkeydown = (e) => {
 
 extCopyButton.addEventListener("mousedown", () => {
   getHighlight((payload) => {
-    navigator.clipboard.writeText(payload).then(() => {});
+    navigator.clipboard.writeText(payload).then(() => {
+      closePopBoy();
+    });
   });
 });
 

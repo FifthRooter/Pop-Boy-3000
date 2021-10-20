@@ -5,15 +5,12 @@ import {
   openUrl,
   setHighlight,
   getCurrentTab,
-  saveToBlocklist,
   getBlocklist,
-  isBlocklisted,
 } from "./helpers/runtimeApi";
 
 // Create elements
 const extMainContainer = document.createElement("DIV");
 const extName = document.createElement("DIV");
-const extInput = document.createElement("INPUT");
 const extSearchButton = document.createElement("BUTTON");
 const extCopyButton = document.createElement("BUTTON");
 const extUnitConv = document.createElement("DIV");
@@ -35,6 +32,7 @@ let popboyDelayTimeout;
 
 // Element id's
 extMainContainer.classList.add("ext-main");
+extMainContainer.id = "ext-main";
 extName.id = "ext-name";
 extSearchButton.id = "btn-search";
 extCopyButton.id = "btn-copy";
@@ -73,8 +71,11 @@ Functions
 */
 
 function closePopBoy() {
-  document.querySelector("body").removeChild(extMainContainer);
-  highlightIsOn = false;
+  console.log(document.getElementById("closePopBoy()"));
+  if (document.getElementById("ext-main")) {
+    document.querySelector("body").removeChild(extMainContainer);
+    highlightIsOn = false;
+  }
 }
 
 function setPopboyTimeout() {

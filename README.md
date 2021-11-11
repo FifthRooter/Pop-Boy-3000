@@ -6,6 +6,7 @@ Main features are:
 1) Copy - copies highlighted text to clipboard.
 2) Search - opens a new tab runs the highlighted text as a search query in your default search engine.
 3) Converts units & currencies - converts imperial units to metric units or vice-versa, converts fiat & crypto currencies to your set desired fiat or crypto currency based on recently fetched exchange rate data. To see what website(s) the exchange rates are fetched from, check file `./src/js/helpers/updateExchangeRates.js`.
+4) Converts time from different time zones (not yet implemented!) to a timezone of your choosing (in the options popup).
 
 
 
